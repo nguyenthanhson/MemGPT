@@ -875,7 +875,9 @@ def parse_json(string) -> dict:
         raise e
 
 
-def validate_function_response(function_response_string: any, strict: bool = False, truncate: bool = True) -> str:
+def validate_function_response(
+    function_response_string: any, strict: bool = False
+) -> str:
     """Check to make sure that a function used by MemGPT returned a valid response
 
     Responses need to be strings (or None) that fall under a certain text count limit.
@@ -912,7 +914,7 @@ def validate_function_response(function_response_string: any, strict: bool = Fal
 
     # Now check the length and make sure it doesn't go over the limit
     # TODO we should change this to a max token limit that's variable based on tokens remaining (or context-window)
-    if truncate and len(function_response_string) > FUNCTION_RETURN_CHAR_LIMIT:
+    if len(function_response_string) > FUNCTION_RETURN_CHAR_LIMIT:
         print(
             f"{CLI_WARNING_PREFIX}function return was over limit ({len(function_response_string)} > {FUNCTION_RETURN_CHAR_LIMIT}) and was truncated"
         )
@@ -935,7 +937,9 @@ def list_agent_config_files(sort="last_modified"):
     if sort is not None:
         if sort == "last_modified":
             # Sort the directories by last modified (most recent first)
-            files.sort(key=lambda x: os.path.getmtime(os.path.join(agent_dir, x)), reverse=True)
+            files.sort(
+                key=lambda x: os.path.getmtime(os.path.join(agent_dir, x)), reverse=True
+            )
         else:
             raise ValueError(f"Unrecognized sorting option {sort}")
 
@@ -948,7 +952,9 @@ def list_human_files():
     user_dir = os.path.join(MEMGPT_DIR, "humans")
 
     memgpt_defaults = os.listdir(defaults_dir)
-    memgpt_defaults = [os.path.join(defaults_dir, f) for f in memgpt_defaults if f.endswith(".txt")]
+    memgpt_defaults = [
+        os.path.join(defaults_dir, f) for f in memgpt_defaults if f.endswith(".txt")
+    ]
 
     if os.path.exists(user_dir):
         user_added = os.listdir(user_dir)
@@ -964,7 +970,9 @@ def list_persona_files():
     user_dir = os.path.join(MEMGPT_DIR, "personas")
 
     memgpt_defaults = os.listdir(defaults_dir)
-    memgpt_defaults = [os.path.join(defaults_dir, f) for f in memgpt_defaults if f.endswith(".txt")]
+    memgpt_defaults = [
+        os.path.join(defaults_dir, f) for f in memgpt_defaults if f.endswith(".txt")
+    ]
 
     if os.path.exists(user_dir):
         user_added = os.listdir(user_dir)
@@ -980,7 +988,9 @@ def get_human_text(name: str, enforce_limit=True):
         if f"{name}.txt" == file or name == file:
             human_text = open(file_path, "r", encoding="utf-8").read().strip()
             if enforce_limit and len(human_text) > CORE_MEMORY_HUMAN_CHAR_LIMIT:
-                raise ValueError(f"Contents of {name}.txt is over the character limit ({len(human_text)} > {CORE_MEMORY_HUMAN_CHAR_LIMIT})")
+                raise ValueError(
+                    f"Contents of {name}.txt is over the character limit ({len(human_text)} > {CORE_MEMORY_HUMAN_CHAR_LIMIT})"
+                )
             return human_text
 
     raise ValueError(f"Human {name}.txt not found")
@@ -990,7 +1000,7 @@ def get_persona_text(name: str, enforce_limit=True):
     for file_path in list_persona_files():
         file = os.path.basename(file_path)
         if f"{name}.txt" == file or name == file:
-            persona_text = open(file_path, "r", encoding="utf-8").read().strip()
+            persona_text = open(file_path, "r", encoding="utf8").read().strip()
             if enforce_limit and len(persona_text) > CORE_MEMORY_PERSONA_CHAR_LIMIT:
                 raise ValueError(
                     f"Contents of {name}.txt is over the character limit ({len(persona_text)} > {CORE_MEMORY_PERSONA_CHAR_LIMIT})"
@@ -1004,7 +1014,7 @@ def get_human_text(name: str):
     for file_path in list_human_files():
         file = os.path.basename(file_path)
         if f"{name}.txt" == file or name == file:
-            return open(file_path, "r", encoding="utf-8").read().strip()
+            return open(file_path, "r", encoding="utf8").read().strip()
 
 
 def get_schema_diff(schema_a, schema_b):
@@ -1013,10 +1023,17 @@ def get_schema_diff(schema_a, schema_b):
     linked_function_json = json.dumps(schema_b, indent=2, ensure_ascii=JSON_ENSURE_ASCII)
 
     # Compute the difference using difflib
-    difference = list(difflib.ndiff(f_schema_json.splitlines(keepends=True), linked_function_json.splitlines(keepends=True)))
+    difference = list(
+        difflib.ndiff(
+            f_schema_json.splitlines(keepends=True),
+            linked_function_json.splitlines(keepends=True),
+        )
+    )
 
     # Filter out lines that don't represent changes
-    difference = [line for line in difference if line.startswith("+ ") or line.startswith("- ")]
+    difference = [
+        line for line in difference if line.startswith("+ ") or line.startswith("- ")
+    ]
 
     return "".join(difference)
 
