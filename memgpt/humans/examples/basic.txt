@@ -1,1 +1,5 @@
-First name: Chad
+Your master: Sơn
+Gender: Male
+Age: 38
+Nationality: Vietnam
+Interests: football, game, programming, hiking, running, swimming, ...

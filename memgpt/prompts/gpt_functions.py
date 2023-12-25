@@ -26,7 +26,7 @@ FUNCTIONS_CHAINING = {
                 # https://json-schema.org/understanding-json-schema/reference/array.html
                 "minutes": {
                     "type": "integer",
-                    "description": f"Number of minutes to ignore heartbeats for. Max value of {MAX_PAUSE_HEARTBEATS} minutes ({MAX_PAUSE_HEARTBEATS//60} hours).",
+                    "description": f"Number of minutes to ignore heartbeats for. Max value of {MAX_PAUSE_HEARTBEATS} minutes ({MAX_PAUSE_HEARTBEATS // 60} hours).",
                 },
             },
             "required": ["minutes"],
@@ -307,6 +307,127 @@ FUNCTIONS_CHAINING = {
                 },
             },
             "required": ["method", "url", "request_heartbeat"],
+        },
+    },
+    "get_jira": {
+        "name": "get_jira",
+        "description": "Queries the user's JIRA instance for a given Jira issue key and returns details",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "issue_key": {
+                    "type": "string",
+                    "description": "The JIRA key of the issue. KMS-1234 for example",
+                },
+                "request_heartbeat": {
+                    "type": "boolean",
+                    "description": FUNCTION_PARAM_DESCRIPTION_REQ_HEARTBEAT,
+                },
+            },
+            "required": ["issue_key", "request_heartbeat"],
+        },
+    },
+    "query_jira": {
+        "name": "query_jira",
+        "description": "Queries the user's JIRA instance. It takes a JQL and executes it on the instance. ",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "jql": {
+                    "type": "string",
+                    "description": "JQL that is desired to run on the Jira instance. Make sure it's compatible with JIRA Cloud.",
+                },
+                "request_heartbeat": {
+                    "type": "boolean",
+                    "description": FUNCTION_PARAM_DESCRIPTION_REQ_HEARTBEAT,
+                },
+            },
+            "required": ["jql", "request_heartbeat"],
+        },
+    },
+    "get_projects": {
+        "name": "get_projects",
+        "description": "Makes a request to user's JIRA instance and returns the projects",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "request_heartbeat": {
+                    "type": "boolean",
+                    "description": FUNCTION_PARAM_DESCRIPTION_REQ_HEARTBEAT,
+                },
+            },
+            "required": ["request_heartbeat"],
+        },
+    },
+    "get_boards": {
+        "name": "get_boards",
+        "description": "Makes a request to user's JIRA instance and returns the boards",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "request_heartbeat": {
+                    "type": "boolean",
+                    "description": FUNCTION_PARAM_DESCRIPTION_REQ_HEARTBEAT,
+                },
+            },
+            "required": ["request_heartbeat"],
+        },
+    },
+    "get_board_id": {
+        "name": "get_board_id",
+        "description": "Makes a request to user's JIRA instance and returns the board id",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "board_name": {
+                    "type": "string",
+                    "description": "the board name.",
+                },
+                "request_heartbeat": {
+                    "type": "boolean",
+                    "description": FUNCTION_PARAM_DESCRIPTION_REQ_HEARTBEAT,
+                },
+            },
+            "required": ["board_name", "request_heartbeat"],
+        },
+    },
+    "get_board": {
+        "name": "get_board",
+        "description": "Makes a request to user's JIRA instance and returns the board",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "board_id": {
+                    "type": "string",
+                    "description": "the board id.",
+                },
+
+                "request_heartbeat": {
+                    "type": "boolean",
+                    "description": FUNCTION_PARAM_DESCRIPTION_REQ_HEARTBEAT,
+                },
+
+            },
+            "required": ["board_id""request_heartbeat"],
+        },
+    },
+    "get_sprints": {
+        "name": "get_sprints",
+        "description": "Makes a request to user's JIRA instance and returns the sprints",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "board_id": {
+                    "type": "string",
+                    "description": "the board id.",
+                },
+                "request_heartbeat": {
+                    "type": "boolean",
+                    "description": FUNCTION_PARAM_DESCRIPTION_REQ_HEARTBEAT,
+                },
+
+            },
+            "required": ["board_id""request_heartbeat"],
         },
     },
 }
