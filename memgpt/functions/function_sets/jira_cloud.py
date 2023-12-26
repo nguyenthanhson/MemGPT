@@ -11,14 +11,8 @@ def connect_to_jira(self):
     """
     if self.jira is None:
         server = os.getenv("JIRA_SERVER")
-        if server is None:
-            server = "https://agencybloc.atlassian.net"
         email = os.getenv("JIRA_USER")
-        if email is None:
-            email = "sontnguyen@kms-technology.com"
         token = os.getenv("JIRA_KEY")
-        if token is None:
-            token = "ATATT3xFfGF0hG1bQmJbqLTcn4-gooxOSM1IkpSZImsG4qrjim5W6tvblm3y-itAFw937eXLe-6BRP37L3p9H80J56S6fAiyLbObipml_cajcwdFBh9KckJ4tYM7uoGxO4eZQPU67UYAHkKr2i6DotOM_cbTLpV_KdezN980-TKkO8sBw6C8mZU=92ACC52D"
         self.jira = JIRA({"server": server}, basic_auth=(email, token))
 
 
