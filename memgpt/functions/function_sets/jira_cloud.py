@@ -32,7 +32,13 @@ def get_jira_fields(self, issue_key: str, fields: str) -> dict:
         with open(issue_key + ".txt", "w") as f:
             json.dump(issue.raw, f, indent=4)
 
-        return issue
+        return {
+            "issue": {
+                "key": issue.key,
+                # loop though fields and add them to the response
+                **{field: getattr(issue.fields, field) for field in fields.split(",")},
+            }
+        }
     except JIRAError as e:
         print(f"Error: {e.text}")
         return {"error": str(e.text)}
@@ -42,7 +48,7 @@ def get_jira(self, issue_key: str) -> dict:
     """
     Makes a request to user's JIRA instance with the jira issue that is provided and returns the issue details
     Args:
-        issue_key (str): the issue key (MAIN-1 for example).
+        issue_key (str): the issue key (KMS-1 for example).
     Returns:
         dict: The response from the JIRA request.
     """
@@ -50,8 +56,8 @@ def get_jira(self, issue_key: str) -> dict:
     try:
         issue = self.jira.issue(issue_key)
         # log issue object for debugging
-        # with open(issue_key + ".txt", "w") as f:
-        #     json.dump(issue.raw, f, indent=4)
+        with open(issue_key + ".txt", "w") as f:
+            json.dump(issue.raw, f, indent=4)
 
         return {
             "issue": {
@@ -64,6 +70,8 @@ def get_jira(self, issue_key: str) -> dict:
                 "reporter": issue.fields.reporter.displayName,
                 "assignee": issue.fields.assignee.displayName if issue.fields.assignee else None,
                 "feature_flag": issue.fields.customfield_10069 if issue.fields.customfield_10069 else None,
+                "feature_category": issue.fields.customfield_11104.value if issue.fields.customfield_11104 else None,
+                "feature_category_id": issue.fields.customfield_11104.id if issue.fields.customfield_11104 else None,
                 "status": issue.fields.status.name,
                 "updated": issue.fields.updated,
                 "subtasks": [subtask.key for subtask in issue.fields.subtasks],
@@ -92,7 +100,6 @@ def get_jira(self, issue_key: str) -> dict:
                         "filename": attachment.filename,
                         "created": attachment.created,
                         "size": attachment.size,
-                        "mimetype": attachment.mimetype,
                         "content": attachment.get(),
                     }
                     for attachment in issue.fields.attachment
