@@ -125,18 +125,19 @@ def get_jira(self, issue_key: str) -> dict:
         return {"error": str(e.text)}
 
 
-def query_jira(self, jql: str) -> dict:
+def query_jira(self, jql: str, max_results: int) -> dict:
     """
     Makes a request to user's JIRA instance with the jql that is provided and returns the issues
     Args:
         jql (str): the JQL. Example: "project=KMS and assignee != currentUser() and resolution = Unresolved order by priority DESC"
+        max_results (int): the maximum number of results to return. Example: 10
     Returns:
-        dict: The response from the JIRA request.
+        dict: The response from the JIRA request containing issue keys and summaries.
     """
     connect_to_jira(self)
     try:
-        issues = self.jira.search_issues(jql)
-        return {"issues": [issue.key for issue in issues]}
+        issues = self.jira.search_issues(jql, maxResults=max_results)
+        return {"issues": [{"key": issue.key, "summary": issue.fields.summary} for issue in issues]}
     except JIRAError as e:
         print(f"Error: {e.text}")
         return {"error": str(e.text)}
