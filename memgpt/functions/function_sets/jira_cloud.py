@@ -20,7 +20,7 @@ def get_jira_fields(self, issue_key: str, fields: str) -> dict:
     """
     Makes a request to user's JIRA instance with the jira issue key that is provided and returns the issue fields that are requested
     Args:
-        issue_key (str): the issue key (KMS-1 for example).
+        issue_key (str): the issue key ("KMS-1" for example).
         fields (str): the fields to be returned. Example: "summary,description,issuetype,project,priority,reporter,assignee,status,updated,subtasks,fix_versions,parent,comment,attachment,issuelinks"
     Returns:
         dict: The response from the JIRA request.
@@ -48,7 +48,7 @@ def get_jira(self, issue_key: str) -> dict:
     """
     Makes a request to user's JIRA instance with the jira issue that is provided and returns the issue details
     Args:
-        issue_key (str): the issue key (KMS-1 for example).
+        issue_key (str): the issue key ("KMS-1" for example).
     Returns:
         dict: The response from the JIRA request.
     """
@@ -129,7 +129,7 @@ def query_jira(self, jql: str, max_results: int) -> dict:
     """
     Makes a request to user's JIRA instance with the jql that is provided and returns the issues
     Args:
-        jql (str): the JQL. Example: "project=KMS and assignee != currentUser() and resolution = Unresolved order by priority DESC"
+        jql (str): the Jira Query Language. Example: "project=KMS and assignee != currentUser() and resolution = Unresolved order by priority DESC"
         max_results (int): the maximum number of results to return. Example: 10
     Returns:
         dict: The response from the JIRA request containing issue keys and summaries.
@@ -193,28 +193,11 @@ def get_board_id(self, board_name: str) -> dict:
         return {"error": str(e.text)}
 
 
-def get_board(self, board_id: str) -> dict:
-    """
-    Makes a request to user's JIRA instance and returns the board name
-    Args:
-        board_id (str): the board id.
-    Returns:
-        dict: The response from the JIRA request.
-    """
-    connect_to_jira(self)
-    try:
-        board = self.jira.board(board_id)
-        return {"board": board.name}
-    except JIRAError as e:
-        print(f"Error: {e.text}")
-        return {"error": str(e.text)}
-
-
-def get_sprints(self, board_id: str) -> dict:
+def get_sprints(self, board_id: int) -> dict:
     """
     Makes a request to user's JIRA instance and returns the sprints
     Args:
-        board_id (str): the board id.
+        board_id (int): the board id.
     Returns:
         dict: The response from the JIRA request.
     """
@@ -222,6 +205,23 @@ def get_sprints(self, board_id: str) -> dict:
     try:
         sprints = self.jira.sprints(board_id)
         return {"sprints": [sprint.name for sprint in sprints]}
+    except JIRAError as e:
+        print(f"Error: {e.text}")
+        return {"error": str(e.text)}
+
+
+def get_sprint(self, sprint_id: int) -> dict:
+    """
+    Makes a request to user's JIRA instance and returns the sprint name
+    Args:
+        sprint_id (int): the sprint id.
+    Returns:
+        dict: The response from the JIRA request.
+    """
+    connect_to_jira(self)
+    try:
+        sprint = self.jira.sprint(sprint_id)
+        return {"sprint": sprint.name}
     except JIRAError as e:
         print(f"Error: {e.text}")
         return {"error": str(e.text)}

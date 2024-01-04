@@ -876,7 +876,7 @@ def parse_json(string) -> dict:
 
 
 def validate_function_response(
-    function_response_string: any, strict: bool = False
+    function_response_string: any, strict: bool = False, truncate: bool = True
 ) -> str:
     """Check to make sure that a function used by MemGPT returned a valid response
 
@@ -914,7 +914,7 @@ def validate_function_response(
 
     # Now check the length and make sure it doesn't go over the limit
     # TODO we should change this to a max token limit that's variable based on tokens remaining (or context-window)
-    if len(function_response_string) > FUNCTION_RETURN_CHAR_LIMIT:
+    if truncate and len(function_response_string) > FUNCTION_RETURN_CHAR_LIMIT:
         print(
             f"{CLI_WARNING_PREFIX}function return was over limit ({len(function_response_string)} > {FUNCTION_RETURN_CHAR_LIMIT}) and was truncated"
         )

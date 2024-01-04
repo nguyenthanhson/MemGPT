@@ -15,5 +15,5 @@ functions:
   - "get_projects"
   - "get_boards"
   - "get_board_id"
-  - "get_board"
   - "get_sprints"
+  - "get_sprint"
