@@ -100,6 +100,20 @@ def append_to_text_file(self, filename: str, content: str):
     with open(filename, "a", encoding="utf-8") as file:
         file.write(content + "\n")
 
+def create_text_file(self, filename: str, content: str):
+    """
+    Create a new text file.
+
+    Args:
+        filename (str): The name of the file to create.
+        content (str): Content to write to the file.
+
+    Returns:
+        Optional[str]: None is always returned as this function does not produce a response.
+    """
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(content + "\n")
+
 
 def http_request(self, method: str, url: str, payload_json: Optional[str] = None):
     """

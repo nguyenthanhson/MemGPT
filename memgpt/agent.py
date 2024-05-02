@@ -294,6 +294,8 @@ class Agent(object):
 
         self._messages: List[Message] = []
 
+        self.jira = None
+
         # Once the memory object is initialized, use it to "bake" the system message
         if "messages" in self.agent_state.state and self.agent_state.state["messages"] is not None:
             # print(f"Agent.__init__ :: loading, state={agent_state.state['messages']}")
@@ -364,6 +366,7 @@ class Agent(object):
         self.persistence_manager.trim_messages(num)
 
         new_messages = [self._messages[0]] + self._messages[num:]
+        printd(f"new_messages 1={new_messages}")
         self._messages = new_messages
 
     def _prepend_to_messages(self, added_messages: List[Message]):
@@ -374,6 +377,7 @@ class Agent(object):
 
         new_messages = [self._messages[0]] + added_messages + self._messages[1:]  # prepend (no system)
         self._messages = new_messages
+        printd(f"new_messages 4={new_messages}")
         self.messages_total += len(added_messages)  # still should increment the message counter (summaries are additions too)
 
     def _append_to_messages(self, added_messages: List[Message]):
@@ -389,6 +393,7 @@ class Agent(object):
         new_messages = self._messages + added_messages  # append
 
         self._messages = new_messages
+        printd(f"new_messages 3={new_messages}")
         self.messages_total += len(added_messages)
 
     def append_to_messages(self, added_messages: List[dict]):
@@ -412,6 +417,7 @@ class Agent(object):
         self.persistence_manager.swap_system_message(new_system_message)
 
         new_messages = [new_system_message] + self._messages[1:]  # swap index 0 (system)
+        printd(f"new_messages 2={new_messages}")
         self._messages = new_messages
 
     def _get_ai_reply(
@@ -423,6 +429,7 @@ class Agent(object):
     ) -> chat_completion_response.ChatCompletionResponse:
         """Get response from LLM API"""
         try:
+            printd(f"Calling LLM API with message_sequence={message_sequence}")
             response = create(
                 # agent_state=self.agent_state,
                 llm_config=self.agent_state.llm_config,
@@ -720,16 +727,19 @@ class Agent(object):
                 input_message_sequence = self._messages + [user_message]
             # Alternatively, the requestor can send an empty user message
             else:
+                printd(f"self._messages {self._messages}")
                 input_message_sequence = self._messages
 
             if len(input_message_sequence) > 1 and input_message_sequence[-1].role != "user":
                 printd(f"{CLI_WARNING_PREFIX}Attempting to run ChatCompletion without user as the last message in the queue")
 
+            printd(f"_messages 0: {self._messages}")
             # Step 1: send the conversation and available functions to GPT
             if not skip_verify and (first_message or self.messages_total == self.messages_total_init):
                 printd(f"This is the first message. Running extra verifier on AI response.")
                 counter = 0
                 while True:
+                    printd(f"input_message_sequence 1: {input_message_sequence}")
                     response = self._get_ai_reply(
                         message_sequence=input_message_sequence,
                         first_message=True,  # passed through to the prompt formatter

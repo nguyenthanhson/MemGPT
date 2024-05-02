@@ -1,8 +1,8 @@
 import json
-import os
 
 from jira import JIRA
 from jira.exceptions import JIRAError
+
 
 
 def connect_to_jira(self):
@@ -95,15 +95,15 @@ def get_jira(self, issue_key: str) -> dict:
                     }
                     for comment in issue.fields.comment.comments
                 ] if issue.fields.comment.comments else None,
-                "attachments": [
-                    {
-                        "filename": attachment.filename,
-                        "created": attachment.created,
-                        "size": attachment.size,
-                        "content": attachment.get(),
-                    }
-                    for attachment in issue.fields.attachment
-                ] if issue.fields.attachment else None,
+                # "attachments": [
+                #     {
+                #         "filename": attachment.filename,
+                #         "created": attachment.created,
+                #         "size": attachment.size,
+                #         "content": attachment.get(),
+                #     }
+                #     for attachment in issue.fields.attachment
+                # ] if issue.fields.attachment else None,
                 # "links": [
                 #     {
                 #         "type": link.type.name,
